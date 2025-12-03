@@ -40,6 +40,12 @@ services:
     volumes:
       - geoserver_data:/opt/geoserver/data_dir
 
+  gdal:
+    image: ghcr.io/osgeo/gdal:alpine-small-latest
+    working_dir: /data
+    volumes:
+      - ./data:/data
+
 volumes:
   pg_data:
   pgadmin_data:

@@ -4,7 +4,7 @@ Construit un environnement Docker avec Apache+PHP+Flight, Postgres/PostGIS, pgAd
 
 ## Structure générale
 
-L’environnement est composé de 4 services (définis dans `docker-compose.yml`) :
+L’environnement est composé de 5 services (définis dans `docker-compose.yml`) :
 
 | Service                | Nom interne | Rôle                                    | Ports exposés (hôte:docker) | Volume principal                         |
 | ---------------------- | ----------- | --------------------------------------- | --------------------------- | ---------------------------------------- |
@@ -12,6 +12,7 @@ L’environnement est composé de 4 services (définis dans `docker-compose.yml`
 | **PostgreSQL+PostGIS** | db          | Base de données spatiale                | `5432`                      | `pg_data:/var/lib/postgresql/data`       |
 | **pgAdmin**            | pgadmin     | Interface web pour gérer Postgres       | `5050:80`                   | `pgadmin_data:/var/lib/pgadmin`          |
 | **GeoServer**          | geoserver   | Serveur cartographique (WMS, WFS, WCS)  | `8080:8080`                 | `geoserver_data:/opt/geoserver/data_dir` |
+| **GDAL**               | gdal        | Librairie de conversion de données géo  |                             | `./data:/data`
 
 ## Détails des services
 
@@ -37,12 +38,20 @@ L’environnement est composé de 4 services (définis dans `docker-compose.yml`
 - user: `admin`, pass: `geoserver`
 - http://localhost:8080/geoserver
 
+### GDAL
+
+- permet de faire des transformations de rasters ou vecteurs
+- accède au dossier `./data`
+- ouvrir un shell dans le conteneur: `docker compose run --rm -it gdal sh`
+- exécuter des commandes GDAL
+
 ## Volumes & persistance
 
 Les volumes Docker permettent de conserver les données même si le conteneur est supprimé et/ou relancé :
 
 - un volume pour Apache+PHP (monté sur le dossier `./apache-php/src`)
 - trois autres volumes Docker pour les données (attention, les données de ces volumes ne sont pas accessibles en local, voir «Sauvegarde» plus loin)
+- un volume pour les données géospatiales (`./data`)
 
 ```yml
 volumes:
